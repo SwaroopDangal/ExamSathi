@@ -1,9 +1,21 @@
 import React from "react";
 import { FcGoogle } from "react-icons/fc";
 import logo from "../assets/logo.png";
+import { auth, provider } from "../utils/firebase";
+import { signinInWithPopup } from "firebase/auth";
 
 const Auth = () => {
-  const handleGoogleAuth = () => {};
+  const handleGoogleAuth = async () => {
+    try {
+      const response = await signinInWithPopup(auth, provider);
+      const user = response?.user;
+      const name = user?.displayName;
+      const email = user?.email;
+      
+    } catch (error) {
+      console.error("Google authentication failed:", error);
+    }
+  };
   return (
     <div className="min-h-screen overflow-hidden bg-white text-black px-8">
       {/* HEADER */}
