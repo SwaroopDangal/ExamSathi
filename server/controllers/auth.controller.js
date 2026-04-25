@@ -1,4 +1,5 @@
-import User from "../models/user.model.js"
+import User from "../models/user.models.js"
+import { getToken } from "../utils/token.js";
 
 
 export const authGoogle = async (req, res) => {
@@ -22,5 +23,15 @@ export const authGoogle = async (req, res) => {
         console.error("Google authentication failed:", error);
         return res.status(500).json({ message: "Internal server error" })
 
+    }
+}
+
+export const logOut = async (req, res) => {
+    try {
+        await res.clearCookie("token")
+        return res.status(200).json({ message: "Logout successful" })
+
+    } catch (err) {
+        return res.status(500).json({ message: `Logout error ${err}` })
     }
 }
