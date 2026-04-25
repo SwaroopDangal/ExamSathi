@@ -2,13 +2,14 @@ import React from "react";
 import { FcGoogle } from "react-icons/fc";
 import logo from "../assets/logo.png";
 import { auth, provider } from "../utils/firebase";
-import { signinInWithPopup } from "firebase/auth";
+import { signInWithPopup } from "firebase/auth";
 import { serverUrl } from "../App";
+import { motion } from "framer-motion";
 
 const Auth = () => {
   const handleGoogleAuth = async () => {
     try {
-      const response = await signinInWithPopup(auth, provider);
+      const response = await signInWithPopup(auth, provider);
       const user = response?.user;
       const name = user?.displayName;
       const email = user?.email;
@@ -21,7 +22,7 @@ const Auth = () => {
         credentials: "include",
       });
       const data = await result.json();
-      console.log(data);  
+      console.log(data);
     } catch (error) {
       console.error("Google authentication failed:", error);
     }
