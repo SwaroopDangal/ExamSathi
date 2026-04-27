@@ -1,6 +1,7 @@
 import { serverUrl } from "../App";
+import { setUserData } from "../redux/userSlice";
 
-export const getCurrentUser = async () => {
+export const getCurrentUser = async (dispatch) => {
     try {
         const result = await fetch(`${serverUrl}/api/user/currentuser`, {
             method: "GET",
@@ -11,8 +12,7 @@ export const getCurrentUser = async () => {
             credentials: "include",
         })
         const userData = await result.json()
-        console.log(userData)
-        return userData;
+        dispatch(setUserData(userData?.user))
 
     } catch (error) {
         console.log(error)
