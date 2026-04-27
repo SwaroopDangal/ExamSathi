@@ -5,8 +5,11 @@ import { auth, provider } from "../utils/firebase";
 import { signInWithPopup } from "firebase/auth";
 import { serverUrl } from "../App";
 import { motion } from "framer-motion";
+import { useDispatch } from "react-redux";
+import { setUserData } from "../redux/userSlice";
 
 const Auth = () => {
+  const dispatch = useDispatch();
   const handleGoogleAuth = async () => {
     try {
       const response = await signInWithPopup(auth, provider);
@@ -22,6 +25,7 @@ const Auth = () => {
         credentials: "include",
       });
       const data = await result.json();
+      dispatch(setUserData(data.user));
       console.log(data);
     } catch (error) {
       console.error("Google authentication failed:", error);
