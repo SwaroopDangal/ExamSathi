@@ -4,6 +4,7 @@ import { connectDB } from "./utils/db.js";
 import authRouter from "./routes/auth.routes.js";
 import userRouter from "./routes/user.routes.js";
 import notesRouter from "./routes/generate.routes.js";
+import pdfRouter from "./routes/pdf.routes.js";
 
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -30,6 +31,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
 app.use("/api/notes", notesRouter);
+app.use("/api/pdf", pdfRouter);
 
 
 app.get("/", (req, res) => {
