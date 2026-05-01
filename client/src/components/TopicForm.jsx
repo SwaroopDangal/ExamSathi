@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useDispatch } from "react-redux";
 import { generateNotes } from "../services/api";
+import { updateCredits } from "../redux/userSlice";
 
 function TopicForm({ setResult, setLoading, loading, setError }) {
   const [topic, setTopic] = useState("");
@@ -35,9 +36,15 @@ function TopicForm({ setResult, setLoading, loading, setError }) {
 
       console.log("FULL RESPONSE:", response);
 
+      const creditsLeft = response?.data?.creditsLeft ?? response?.creditsLeft;
+
       const resultData = response?.data?.data || response?.data;
 
       setResult(resultData);
+
+      if (typeof creditsLeft === "number") {
+        dispatch(updateCredits(creditsLeft));
+      }
 
       // reset form
       setTopic("");
@@ -59,7 +66,36 @@ function TopicForm({ setResult, setLoading, loading, setError }) {
     }
   };
 
-  
+  // Fake Smooth Progress Animation
+  useEffect(() => {
+    if (!loading) {
+      setProgress(0);
+      setProgressText("");
+      return;
+    }
+
+    let value = 0;
+
+    const interval = setInterval(() => {
+      value += Math.random() * 8;
+
+      if (value >= 95) {
+        value = 95;
+        setProgressText("Almost done...");
+        clearInterval(interval);
+      } else if (value > 70) {
+        setProgressText("Finalizing the notes...");
+      } else if (value > 40) {
+        setProgressText("Processing content...");
+      } else {
+        setProgressText("Generating notes...");
+      }
+
+      setProgress(Math.floor(value));
+    }, 700);
+
+    return () => clearInterval(interval);
+  }, [loading]);
 
   return (
     <motion.div
