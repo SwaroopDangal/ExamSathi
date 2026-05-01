@@ -1,4 +1,4 @@
-import Notes from "../models/note.model.js";
+import Notes from "../models/note.models.js";
 import User from "../models/user.models.js";
 import { generateGeminiResponse } from "../services/gemini.services.js";
 import { buildPrompt } from "../utils/promptBuilder.js";

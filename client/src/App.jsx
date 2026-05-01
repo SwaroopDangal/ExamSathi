@@ -5,6 +5,7 @@ import Auth from "./pages/Auth";
 import { getCurrentUser } from "./services/api";
 import { useDispatch, useSelector } from "react-redux";
 import Home from "./pages/Home";
+import Notes from "./pages/Note";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -24,6 +25,10 @@ const App = () => {
       <Route
         path="/auth"
         element={userData ? <Navigate to="/" replace /> : <Auth />}
+      />
+      <Route
+        path="/notes"
+        element={userData ? <Notes /> : <Navigate to="/auth" replace />}
       />
     </Routes>
   );

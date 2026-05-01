@@ -18,3 +18,24 @@ export const getCurrentUser = async (dispatch) => {
         console.log(error)
     }
 }
+
+export const generateNotes = async (payload) => {
+    try {
+        const result = await fetch(`${serverUrl}/api/notes/generate-notes`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+            withCredentials: true,
+            credentials: "include",
+        })
+        const data = await result.json()
+        return data
+
+
+    } catch (err) {
+        console.error("Generate Error:", err.response?.data || err.message);
+        throw err; // 🔥 important
+    }
+}
