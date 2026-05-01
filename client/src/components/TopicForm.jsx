@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useDispatch } from "react-redux";
+import { generateNotes } from "../services/api";
 
 function TopicForm({ setResult, setLoading, loading, setError }) {
   const [topic, setTopic] = useState("");
@@ -14,7 +15,51 @@ function TopicForm({ setResult, setLoading, loading, setError }) {
   const [progress, setProgress] = useState(0);
   const [progressText, setProgressText] = useState("");
 
-  const handleSubmit = async () => {};
+  const handleSubmit = async () => {
+    if (!topic.trim()) {
+      setError("Please enter a topic");
+      return;
+    }
+    try {
+      setLoading(true);
+      setError("");
+      setResult(null);
+      const response = await generateNotes({
+        topic,
+        classLevel,
+        examType,
+        revisionMode,
+        includeDiagram,
+        includeChart,
+      });
+
+      console.log("FULL RESPONSE:", response);
+
+      const resultData = response?.data?.data || response?.data;
+
+      setResult(resultData);
+
+      // reset form
+      setTopic("");
+      setClassLevel("");
+      setExamType("");
+      setIncludeChart(false);
+      setIncludeDiagram(false);
+      setRevisionMode(false);
+
+      setProgress(100);
+      setProgressText("Completed!");
+    } catch (err) {
+      console.error("🔥 Error:", err);
+      setError("Failed to generate notes");
+    } finally {
+      setTimeout(() => {
+        setLoading(false);
+      }, 500);
+    }
+  };
+
+  
 
   return (
     <motion.div
