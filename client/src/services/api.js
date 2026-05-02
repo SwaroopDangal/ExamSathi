@@ -39,3 +39,44 @@ export const generateNotes = async (payload) => {
         throw err; // 🔥 important
     }
 }
+
+
+
+export const downloadPdf = async (result) => {
+    try {
+        const response = await fetch(`${serverUrl}/api/pdf/generate-pdf`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(result),
+            withCredentials: true,
+            credentials: "include",
+        })
+        const data = await response.json()
+
+        // Create PDF Blob
+        const blob = new Blob([data], {
+            type: "application/pdf",
+        });
+
+        // Create temporary URL
+        const url = window.URL.createObjectURL(blob);
+
+        // Create anchor element
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "ExamNotesAI.pdf";
+
+        // Trigger download
+        document.body.appendChild(link);
+        link.click();
+
+        // Cleanup
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+
+    } catch (error) {
+        console.error("PDF Download Failed:", error);
+    }
+};
