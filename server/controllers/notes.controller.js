@@ -23,3 +23,29 @@ export const getMyNotes = async (req, res) => {
         });
     }
 };
+
+
+export const getSingleNotes = async (req, res) => {
+    try {
+        const note = await Notes.findOne({
+            _id: req.params.id,
+            user: req.userId,
+        });
+
+        if (!note) {
+            return res.status(404).json({
+                error: "Note not found",
+            });
+        }
+
+        return res.status(200).json({
+            content: note.content,
+            topic: note.topic,
+            createdAt: note.createdAt
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: `Get single note error: ${error.message}`,
+        });
+    }
+};
