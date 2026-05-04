@@ -1,0 +1,25 @@
+import Notes from "../models/note.models.js";
+
+/* ---------------- GET ALL NOTES ---------------- */
+
+export const getMyNotes = async (req, res) => {
+    try {
+        const notes = await Notes.find({ user: req.userId })
+            .select(
+                "topic classLevel examType revisionMode includeDiagram includeChart createdAt"
+            )
+            .sort({ createdAt: -1 });
+
+        if (!notes || notes.length === 0) {
+            return res.status(404).json({
+                error: "No notes found",
+            });
+        }
+
+        return res.status(200).json(notes);
+    } catch (error) {
+        return res.status(500).json({
+            message: `Get current user notes error: ${error.message}`,
+        });
+    }
+};
