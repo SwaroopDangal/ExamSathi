@@ -19,10 +19,71 @@ function History() {
   const [selectedNote, setSelectedNote] = useState(null);
   const [activeId, setActiveId] = useState(null);
 
+  /* ---------------- FETCH NOTES ---------------- */
+  useEffect(() => {
+    const myNotes = async () => {
+      try {
+        const res = fetch(serverUrl + "/api/notes/getnotes", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${userData.token}`,
+          },
+          credentials: "include",
+        }).then((response) => response.json());
+        setTopics(Array.isArray(res.data) ? res.data : []);
+      } catch (error) {
+        console.log("Fetch Notes Error:", error);
+      }
+    };
+    myNotes();
+  }, []);
 
+  /* ---------------- OPEN NOTE ---------------- */
+  const openNote = async (noteId) => {
+    setLoading(true);
+    setActiveId(noteId);
+
+    try {
+      const res = fetch(serverUrl + `/api/notes/${noteId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${userData.token}`,
+        },
+        credentials: "include",
+      }).then((response) => response.json());
+      setSelectedNote(res.data.content);
+
+      if (window.innerWidth < 1024) {
+        setIsSidebarOpen(false);
+      }
+    } catch (err) {
+      console.log("Error opening note:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* ---------------- RESPONSIVE SIDEBAR ---------------- */
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setIsSidebarOpen(true);
+      } else {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 px-4 sm:px-6 py-6 sm:py-8">
+    <div className="min-h-screen bg-linear-to-br from-gray-100 to-gray-200 px-4 sm:px-6 py-6 sm:py-8">
       {/* ---------------- HEADER ---------------- */}
       <motion.header
         initial={{ opacity: 0, y: -15 }}
@@ -41,7 +102,7 @@ function History() {
             className="w-8 h-8 sm:w-9 sm:h-9 object-contain"
           />
           <div>
-            <h1 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-white via-gray-300 to-white bg-clip-text text-transparent">
+            <h1 className="text-lg sm:text-xl font-bold bg-linear-to-r from-white via-gray-300 to-white bg-clip-text text-transparent">
               ExamNotes <span className="text-gray-400">AI</span>
             </h1>
             <p className="text-[10px] sm:text-xs text-gray-300 -mt-1">
