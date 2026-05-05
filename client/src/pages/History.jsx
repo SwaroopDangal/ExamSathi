@@ -12,6 +12,7 @@ function History() {
 
   const userData = useSelector((state) => state.user.userData);
   const credits = userData?.credits ?? 0;
+  console.log(userData);
 
   const [topics, setTopics] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -23,20 +24,22 @@ function History() {
   useEffect(() => {
     const myNotes = async () => {
       try {
-        const res = fetch(serverUrl + "/api/notes/getnotes", {
+        const response = await fetch(serverUrl + "/api/notes/getnotes", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Accept: "application/json",
-            Authorization: `Bearer ${userData.token}`,
           },
           credentials: "include",
-        }).then((response) => response.json());
-        setTopics(Array.isArray(res.data) ? res.data : []);
+          withCredentials: true,
+        });
+        const res = await response.json();
+        console.log("siuu", res);
+        setTopics(Array.isArray(res) ? res : []);
       } catch (error) {
         console.log("Fetch Notes Error:", error);
       }
     };
+
     myNotes();
   }, []);
 
@@ -46,16 +49,17 @@ function History() {
     setActiveId(noteId);
 
     try {
-      const res = fetch(serverUrl + `/api/notes/${noteId}`, {
+      const response = await fetch(serverUrl + `/api/notes/${noteId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Accept: "application/json",
-          Authorization: `Bearer ${userData.token}`,
         },
+        withCredentials: true,
         credentials: "include",
-      }).then((response) => response.json());
-      setSelectedNote(res.data.content);
+      });
+      const res = await response.json();
+
+      setSelectedNote(res.content);
 
       if (window.innerWidth < 1024) {
         setIsSidebarOpen(false);
